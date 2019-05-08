@@ -808,8 +808,16 @@ class Synset(_WordNetObject):
             other,
             simulate_root=simulate_root and self._needs_root()
         )
+        commutative = other.shortest_path_distance(
+                self,
+                simulate_root=simulate_root and self._needs_root()
+        )
         if distance is None or distance < 0:
-            return None
+            if commutative is None or commutative < 0:
+                return None
+            else:
+                distance = commutative
+        
         return 1.0 / (distance + 1)
 
     def lch_similarity(self, other, verbose=False, simulate_root=True):
@@ -859,9 +867,15 @@ class Synset(_WordNetObject):
             other,
             simulate_root=simulate_root and need_root
         )
-
-        if distance is None or distance < 0 or depth == 0:
-            return None
+        commutative = other.shortest_path_distance(
+                self,
+                simulate_root=simulate_root and self._needs_root()
+        )
+        if distance is None or distance < 0:
+            if commutative is None or commutative < 0:
+                return None
+            else:
+                distance = commutative
         return -math.log((distance + 1) / (2.0 * depth))
 
     def wup_similarity(self, other, verbose=False, simulate_root=True):
